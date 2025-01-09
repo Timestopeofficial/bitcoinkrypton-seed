@@ -1,0 +1,117 @@
+{
+  "name": "@timestope-official/bitcoinkrypton-seed",
+  "version": "1.0.4-0.0.1",
+  "main": "dist/node.js",
+  "types": "dist/types.d.ts",
+  "homepage": "https://timestope.com/",
+  "description": "",
+  "scripts": {
+    "prepare": "gulp build-node",
+    "build": "gulp build",
+    "esdoc": "esdoc",
+    "test": "jasmine && karma start",
+    "test-node": "jasmine",
+    "test-browser": "karma start",
+    "lint": "gulp eslint",
+    "lint-types": "tslint ./dist/types.d.ts"
+  },
+  "author": {
+    "name": "The Krypton Development Team",
+    "url": "https://timestope.com/"
+  },
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/Timestopeofficial/krypton/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Timestopeofficial/krypton.git"
+  },
+  "engines": {
+    "node": ">=16.20.2"
+  },
+  "files": [
+    "dist/node.js",
+    "dist/types.d.ts",
+    "binding.gyp",
+    "src/native"
+  ],
+  "node_deb": {
+    "package_name": "krypton",
+    "version": "1.0.0-1",
+    "init": "systemd",
+    "architecture": "amd64",
+    "install_strategy": "copy",
+    "description": "Krypton node.js client",
+    "maintainer": "The Krypton Development Team",
+    "extra_files": "fakeroot",
+    "templates": {
+      "executable": "krypton",
+      "default_variables": "default",
+      "postinst": "postinst",
+      "postrm": "postrm",
+      "prerm": "prerm",
+      "systemd_service": "systemd.service"
+    },
+    "entrypoints": {
+      "daemon": "app/node /usr/share/krypton/app/index.js"
+    }
+  },
+  "gypfile": true,
+  "dependencies": {
+    "@nimiq/jungle-db": "^0.10.1",
+    "atob": "^2.0.3",
+    "bindings": "^1.3.0",
+    "btoa": "^1.1.2",
+    "chalk": "^2.3.2",
+    "cpuid-git": "^0.3.1",
+    "json5": "^2.1.0",
+    "lodash.merge": "^4.6.2",
+    "minimist": "^1.2.8",
+    "nan": "^2.17.0",
+    "node-deb": "^0.10.7",
+    "ws": "^7.0.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.4.4",
+    "@babel/core": "^7.4.4",
+    "@babel/plugin-transform-modules-commonjs": "^7.4.4",
+    "@babel/plugin-transform-runtime": "^7.4.4",
+    "@babel/preset-env": "^7.9.0",
+    "@babel/runtime-corejs2": "^7.4.4",
+    "browserify": "^16.1.1",
+    "codecov": "^3.0.0",
+    "esdoc": "^1.0.4",
+    "esdoc-es7-plugin": "^0.0.3",
+    "esdoc-standard-plugin": "^1.0.0",
+    "eslint": "^6.0.1",
+    "gulp": "^4.0.2",
+    "gulp-babel": "^8.0.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-eslint": "^6.0.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-sourcemaps": "^2.6.5",
+    "gulp-streamify": "^1.0.2",
+    "gulp-string-replace": "^1.0.0",
+    "gulp-uglify-es": "^1.0.1",
+    "gulp-watch": "^5.0.0",
+    "istanbul-api": "^2.1.6",
+    "jasmine": "^3.1.0",
+    "jasmine-console-reporter": "^3.0.0",
+    "jasmine-core": "^3.1.0",
+    "karma": "^6.3.16",
+    "karma-chrome-launcher": "^3.1.0",
+    "karma-cli": "^2.0.0",
+    "karma-coverage": "^2.0.3",
+    "karma-firefox-launcher": "^1.3.0",
+    "karma-jasmine": "^4.0.2",
+    "karma-safari-launcher": "^1.0.0",
+    "merge2": "^1.2.1",
+    "node-gyp": "^9.4.0",
+    "sri-toolbox": "^0.2.0",
+    "tslint": "^5.12.1",
+    "typescript": "^3.3.3",
+    "vinyl-buffer": "^1.0.1",
+    "vinyl-source-stream": "^2.0.0"
+  }
+}

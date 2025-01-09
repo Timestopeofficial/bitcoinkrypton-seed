@@ -1,0 +1,2 @@
+# This file is not used anymore, please check /etc/krypton/krypton.conf
+# if you want to configure krypton systemd service

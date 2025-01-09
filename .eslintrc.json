@@ -1,0 +1,78 @@
+{
+    "parserOptions": {
+        "ecmaVersion": 8,
+        "sourceType": "module"
+    },
+    "env": {
+        "browser": true,
+        "node": true,
+        "jasmine": true
+    },
+    "extends": "eslint:recommended",
+    "rules": {
+        "curly": [
+            "error",
+            "multi-line"
+        ],
+        "eol-last": [
+            "error",
+            "always"
+        ],
+        "indent": [
+            "error",
+            4,
+            {
+                "SwitchCase": 1
+            }
+        ],
+        "quotes": [
+            "warn",
+            "single"
+        ],
+        "semi": [
+            "error",
+            "always"
+        ],
+        "require-jsdoc": [
+            "warn",
+            {
+                "require": {
+                    "FunctionDeclaration": true,
+                    "MethodDefinition": true,
+                    "ClassDeclaration": true,
+                    "ArrowFunctionExpression": false
+                }
+            }
+        ],
+        "consistent-return": "error",
+        "prefer-const": "warn",
+        "prefer-template": "warn",
+        "no-await-in-loop": "warn",
+        "no-console": "off",
+        "no-eval": "error",
+        "no-implied-eval": "error",
+        "no-return-await": "warn",
+        "no-undef": "off",
+        "no-unused-vars": "warn",
+        "no-useless-concat": "warn",
+        "no-var": "warn",
+        "require-await": "warn",
+        "valid-jsdoc": [
+            "warn",
+            {
+                "requireParamDescription": false,
+                "requireReturnDescription": false
+            }
+        ],
+
+        "no-async-promise-executor": "off",
+        "no-misleading-character-class": "off",
+        "no-prototype-builtins": "off",
+        "no-shadow-restricted-names": "off",
+        "no-useless-catch": "off",
+        "no-with": "off",
+        "require-atomic-updates": "off",
+        "for-direction": "off",
+        "getter-return": "off"
+    }
+}

@@ -1,0 +1,160 @@
+describe('MultiSigWallet', () => {
+    const recipient = Address.unserialize(BufferUtils.fromBase64(Dummy.address1));
+    const value = 8888888;
+    const fee = 888;
+    const deepLockRounds = KeyPair.EXPORT_KDF_ROUNDS;
+
+    beforeAll(() => {
+        // Temporarily reduce deep lock rounds.
+        KeyPair.EXPORT_KDF_ROUNDS = KeyPair.LOCK_KDF_ROUNDS;
+    });
+
+    afterAll(() => {
+        KeyPair.EXPORT_KDF_ROUNDS = deepLockRounds;
+    });
+
+    it('rejects if own public key is missing', () => {
+        const keyPair1 = KeyPair.generate();
+        const keyPair2 = KeyPair.generate();
+        const keyPair3 = KeyPair.generate();
+
+        expect(() => MultiSigWallet.fromPublicKeys(keyPair3, 2, [keyPair1.publicKey, keyPair2.publicKey])).toThrow();
+    });
+
+    it('order of public keys does not matter', () => {
+        const keyPair1 = KeyPair.generate();
+        const keyPair2 = KeyPair.generate();
+
+        const wallet1 = MultiSigWallet.fromPublicKeys(keyPair1, 2, [keyPair1.publicKey, keyPair2.publicKey]);
+        const wallet2 = MultiSigWallet.fromPublicKeys(keyPair2, 2, [keyPair2.publicKey, keyPair1.publicKey]);
+
+        expect(wallet1.address.equals(wallet2.address)).toBe(true);
+        for (let i = 0; i < wallet1.publicKeys.length; ++i) {
+            expect(wallet1.publicKeys[i].equals(wallet2.publicKeys[i])).toBe(true);
+        }
+    });
+
+    it('can create a signed transaction', () => {
+        const keyPair1 = KeyPair.generate();
+        const keyPair2 = KeyPair.generate();
+
+        const wallet1 = MultiSigWallet.fromPublicKeys(keyPair1, 2, [keyPair1.publicKey, keyPair2.publicKey]);
+        const wallet2 = MultiSigWallet.fromPublicKeys(keyPair2, 2, [keyPair2.publicKey, keyPair1.publicKey]);
+
+        const commitmentPair1 = wallet1.createCommitment();
+        const commitmentPair2 = wallet2.createCommitment();
+        const aggregatedCommitment = Commitment.sum([commitmentPair1.commitment, commitmentPair2.commitment]);
+        const aggregatedPublicKey = PublicKey.sum([keyPair1.publicKey, keyPair2.publicKey]);
+
+        let transaction = wallet1.createTransaction(recipient, value, 1);
+
+        const partialSignature1 = wallet1.partiallySignTransaction(transaction, [keyPair2.publicKey, keyPair1.publicKey],
+            aggregatedCommitment, commitmentPair1.secret);
+        const partialSignature2 = wallet2.partiallySignTransaction(transaction, [keyPair1.publicKey, keyPair2.publicKey],
+            aggregatedCommitment, commitmentPair2.secret);
+
+        transaction = wallet1.completeTransaction(transaction, aggregatedPublicKey, aggregatedCommitment,
+            [partialSignature1, partialSignature2]);
+        const isValid = transaction.verify();
+        expect(isValid).toBe(true);
+    });
+
+    it('can reject invalid wallet seed', () => {
+        expect(() => {
+            MultiSigWallet.loadPlain('');
+        }).toThrowError('Invalid wallet seed');
+
+        expect(() => {
+            MultiSigWallet.loadPlain('i am not a valid hex seed :(');
+        }).toThrowError('String is not an hex string (of matching length)');
+
+        expect(() => {
+            MultiSigWallet.loadPlain('527ec2efe780dc38a5561348b928bf0225a6986c0b56796ba9af81f91b10c16ffdaa8cab1175bfbf7de576bb0b0009737ecb5c59e60bd0c86fae0f9fa457706b8fca286eaa4030fcd6d2b4d55d24f243f08c9c8bf03d5c1e11ab3860f759607');
+        }).toThrowError();
+    });
+
+    it('can export & import a plaintext wallet', () => {
+        const keyPair1 = KeyPair.generate();
+        const keyPair2 = KeyPair.generate();
+        const wallet = MultiSigWallet.fromPublicKeys(keyPair1, 1, [keyPair1.publicKey, keyPair2.publicKey]);
+        const wallet2 = MultiSigWallet.loadPlain(wallet.exportPlain());
+
+        expect(wallet.keyPair.equals(wallet2.keyPair)).toBeTruthy();
+        expect(wallet.address.equals(wallet2.address)).toBeTruthy();
+        expect(wallet2.minSignatures).toBe(wallet.minSignatures);
+        expect(wallet2.publicKeys.length).toBe(wallet.publicKeys.length);
+        for (let i = 0; i < wallet2.publicKeys.length; ++i) {
+            expect(wallet2.publicKeys[i].equals(wallet.publicKeys[i])).toBeTruthy();
+        }
+    });
+
+    it('can lock, unlock and relock itself', (done) => {
+        (async () => {
+            const keyPair1 = KeyPair.generate();
+            const keyPair2 = KeyPair.generate();
+            const wallet = MultiSigWallet.fromPublicKeys(keyPair1, 1, [keyPair1.publicKey, keyPair2.publicKey]);
+            const key = 'password';
+
+            expect(wallet.isLocked).toBeFalsy();
+            await wallet.lock(key);
+            expect(wallet.isLocked).toBeTruthy();
+            await wallet.unlock(key);
+            expect(wallet.isLocked).toBeFalsy();
+            wallet.relock();
+            expect(wallet.isLocked).toBeTruthy();
+        })().then(done, done.fail);
+    });
+
+    it('can export an encrypted wallet and import it', (done) => {
+        (async () => {
+            const keyPair1 = KeyPair.generate();
+            const keyPair2 = KeyPair.generate();
+            const wallet = MultiSigWallet.fromPublicKeys(keyPair1, 1, [keyPair1.publicKey, keyPair2.publicKey]);
+            const key = 'password';
+
+            const encryptedWallet = await wallet.exportEncrypted(key);
+            const unlockedWallet = await MultiSigWallet.loadEncrypted(encryptedWallet, key);
+            expect(wallet.keyPair.equals(unlockedWallet.keyPair)).toBeTruthy();
+            expect(wallet.address.equals(unlockedWallet.address)).toBeTruthy();
+            expect(wallet.minSignatures).toBe(unlockedWallet.minSignatures);
+            expect(unlockedWallet.publicKeys.length).toBe(wallet.publicKeys.length);
+            for (let i = 0; i < unlockedWallet.publicKeys.length; ++i) {
+                expect(unlockedWallet.publicKeys[i].equals(wallet.publicKeys[i])).toBeTruthy();
+            }
+        })().then(done, done.fail);
+    });
+
+    it('can export an encrypted wallet and import it from hex', (done) => {
+        (async () => {
+            const keyPair1 = KeyPair.generate();
+            const keyPair2 = KeyPair.generate();
+            const wallet = MultiSigWallet.fromPublicKeys(keyPair1, 1, [keyPair1.publicKey, keyPair2.publicKey]);
+            const key = 'password';
+
+            const encryptedWallet = await wallet.exportEncrypted(key);
+            const unlockedWallet = await MultiSigWallet.loadEncrypted(BufferUtils.toHex(encryptedWallet), key);
+            expect(wallet.keyPair.equals(unlockedWallet.keyPair)).toBeTruthy();
+            expect(wallet.address.equals(unlockedWallet.address)).toBeTruthy();
+            expect(wallet.minSignatures).toBe(unlockedWallet.minSignatures);
+            expect(unlockedWallet.publicKeys.length).toBe(wallet.publicKeys.length);
+            for (let i = 0; i < unlockedWallet.publicKeys.length; ++i) {
+                expect(unlockedWallet.publicKeys[i].equals(wallet.publicKeys[i])).toBeTruthy();
+            }
+        })().then(done, done.fail);
+    });
+
+    it('can detect wrong key on an encrypted wallet', (done) => {
+        (async () => {
+            const keyPair1 = KeyPair.generate();
+            const keyPair2 = KeyPair.generate();
+            const wallet = MultiSigWallet.fromPublicKeys(keyPair1, 1, [keyPair1.publicKey, keyPair2.publicKey]);
+            const key = 'password';
+            const key2 = '123456';
+
+            const encryptedWallet = await wallet.exportEncrypted(key);
+            let err = false;
+            await Wallet.loadEncrypted(encryptedWallet, key2).catch(() => err = true);
+            expect(err).toBeTruthy();
+        })().then(done, done.fail);
+    });
+});

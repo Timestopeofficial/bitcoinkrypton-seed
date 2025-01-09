@@ -1,0 +1,17 @@
+[Unit]
+Description=Krypton node.js client
+Requires=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/var/lib/krypton
+ExecStartPre=-+/usr/bin/rpm -e --allmatches gpg-pubkey-3785d050-5ac44a81
+ExecStartPre=-+/usr/bin/apt-key del 8C14F84031083785D050
+ExecStart=/usr/bin/krypton --config=/etc/krypton/krypton.conf
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=always
+User=krypton
+PermissionsStartOnly=true
+
+[Install]
+WantedBy=multi-user.target

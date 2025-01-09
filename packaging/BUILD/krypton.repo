@@ -1,0 +1,6 @@
+[krypton]
+name=krypton
+baseurl=http://repo.krypton.com/rpm/stable/x86_64
+enabled=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-krypton

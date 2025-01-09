@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <title>Krypton Blockchain Cockpit &ndash; Satoshi</title>
+
+    <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+
+    <link href="style.css" rel="stylesheet">
+</head>
+<body>
+
+<script src="./dist/krypton.js"></script>
+
+<header>
+    <span class="name icon-krypton">BitcoinKrypton</span>
+    <!-- <div class="subheader">
+        <div class="subtitle">Blockchain Cockpit &mdash; Satoshi</div>
+        <div id="client-types">
+            <div id="full" class="client-link-container"><a href="#full">Full</a></div>
+            <div id="light" class="client-link-container"><a href="#light">Light</a></div>
+            <div id="nano" class="client-link-container"><a href="#nano">Nano</a></div>
+            <div id="pico" class="client-link-container"><a href="#pico">Pico</a></div>
+        </div>
+    </div> -->
+</header>
+
+<div id="content">
+    <div overlay>
+        <div class="message">
+            Krypton Blockchain Cockpit is already running in another browser window or tab.
+            <br><br>
+            <small>Please use only one window/tab at a time.</small>
+        </div>
+    </div>
+
+    <div main-ui class="main">
+        <div class="left">
+            <!-- Accounts Ui -->
+            <div class="info" accounts-ui>
+                <div class="info-title" accounts-title>
+                    Accounts
+                </div>
+                <div class="info-block">
+                    <strong>Wallets</strong>
+                    <div basic-wallet-list></div>
+                </div>
+                
+                <div class="info-block collapsible collapsed">
+                    <span add-basic-wallet-title>
+                        <strong>Add</strong>
+                        <!-- <span block-add-basic-wallet></span> -->
+                    </span>
+                    <div type-add-basic-wallet>
+                        <div class="button-padding">
+                            <button add-basic-wallet>Create</button>
+                        </div>
+                        <div class="button-padding">
+                            <input import-privateKey-input name="importAddr" maxlength="64" size="64">
+                            <button import-basic-wallet>Import</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- <div class="info-block">
+                    <strong>MultiSig Wallets</strong>
+                    <div multi-sig-wallet-list></div>
+                </div>
+                <div class="info-block" multi-sig-wallet-creation-ui></div> -->
+                <!-- <div class="info-block">
+                    <strong>Vesting Accounts</strong>
+                    <div vesting-account-list></div>
+                </div> -->
+                <!-- <div class="info-block">
+                    <strong>HTLC Accounts</strong>
+                    <div htlc-account-list></div>
+                </div> -->
+                <!-- <div class="info-block">
+                    <strong>Pending Contracts</strong>
+                    <div pending-contracts-list></div>
+                </div> -->
+            </div>
+
+            <!-- Account Lookup -->
+            <div class="info" account-info-ui>
+                <div class="info-title" account-info-title>Account Info</div>
+
+                <div class="input-group">
+                    <input address-input name="lookupAddr"maxlength="45" size="45">
+                    <button clear-button>Clear</button>
+                </div>
+                <div class="info-block">
+                    <strong>Address</strong>
+                    <span address class="address"></span>
+                </div>
+                <!-- <div class="info-block">
+                    <strong>Account Type</strong>
+                    <span account-type></span>
+                </div> -->
+                <div account-details>
+                    <div class="info-block">
+                        <strong>Balance</strong>
+                        <span balance></span>
+                    </div>
+                    <div vesting-account-details>
+                        <div class="info-block">
+                            <strong>Owner</strong>
+                            <span vesting-owner class="address"></span>
+                        </div>
+                        <div class="info-block">
+                            <strong>Vesting Start</strong>
+                            <span vesting-start></span>
+                        </div>
+                        <div class="info-block">
+                            <strong>Vesting Step Blocks</strong>
+                            <span vesting-step-blocks></span>
+                        </div>
+                        <div class="info-block">
+                            <strong>Vesting Step Amount</strong>
+                            <span vesting-step-amount></span>
+                        </div>
+                        <div class="info-block">
+                            <strong>Vesting Total Amount</strong>
+                            <span vesting-total-amount></span>
+                        </div>
+                        <div class="info-block">
+                            <strong>Vesting Current Cap</strong>
+                            <span vesting-current-cap></span>
+                        </div>
+                        <div class="info-block">
+                            <strong>Currently Transferable</strong>
+                            <span vesting-currently-transferable></span>
+                        </div>
+                    </div>
+                    <div htlc-account-details>
+                        <div class="info-block">
+                            <strong>HTLC Sender</strong>
+                            <span htlc-sender class="address"></span>
+                        </div>
+                        <div class="info-block">
+                            <strong>HTLC Recipient</strong>
+                            <span htlc-recipient class="address"></span>
+                        </div>
+                        <div class="info-block">
+                            <strong>HTLC Hash Root</strong>
+                            <hash htlc-hash-root></hash>
+                        </div>
+                        <div class="info-block">
+                            <strong>HTLC Hash Count</strong>
+                            <span htlc-hash-count></span>
+                        </div>
+                        <div class="info-block">
+                            <strong>HTLC Timeout</strong>
+                            <span htlc-timeout></span>
+                        </div>
+                        <div class="info-block">
+                            <strong>HTLC Total Amount</strong>
+                            <span htlc-total-amount></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info" transaction-ui tx-type="basic">
+                <div class="info-title" transaction-title>Transaction</div>
+                <form>
+                    <div class="input-group">
+                        <label>
+                            <strong>Type</strong>
+                            <select tx-type-selector name="tx-type">
+                                <option value="basic" selected>Basic</option>
+                                <option value="general">Extended</option>
+                                <!-- <option value="vesting-creation">Vesting Contract Creation</option>
+                                <option value="htlc-creation">HTLC Contract Creation</option>
+                                <option value="plain">Plain Extended</option> -->
+                            </select>
+                        </label>
+                    </div>
+
+                    <div sender-ui label="Sender"></div>
+
+                    <div class="input-group" show="plain">
+                        <label>
+                            <strong>Plain Sender</strong>
+                            <input tx-plain-sender name="tx-plain-sender" maxlength="45" size="45">
+                        </label>
+                    </div>
+                    <div class="input-group" show="plain">
+                        <label>
+                            <strong>Plain Sender Type</strong>
+                            <input tx-plain-sender-type name="tx-plain-sender-type" type="number" step="1">
+                        </label>
+                    </div>
+                    <div class="input-group" show="basic general plain">
+                        <label>
+                            <strong>Recipient</strong>
+                            <input tx-recipient name="tx-recipient" maxlength="45" size="45">
+                        </label>
+                    </div>
+                    <div class="input-group" show="plain">
+                        <label>
+                            <strong>Recipient Type</strong>
+                            <input tx-recipient-type name="tx-recipient-type" type="number" step="1">
+                        </label>
+                    </div>
+                    <div class="input-group">
+                        <label>
+                            <strong>Value</strong>
+                            <input tx-value name="tx-value" type="number" step="any">
+                        </label>
+                    </div>
+                    <!-- <div class="input-group">
+                        <label>
+                            <strong>Fee</strong>
+                            <input tx-fee name="tx-fee" type="number" step="0.01" placeholder="0">
+                        </label>
+                    </div> -->
+                    <div class="input-group">
+                        <label>
+                            <strong>Start Block</strong>
+                            <input tx-validity-start name="tx-validity-start" type="number" step="1">
+                        </label>
+                    </div>
+                    <div class="input-group" show="general">
+                        <label>
+                            <strong>Data</strong>
+                            <input tx-freeform-data name="tx-freeform-data" size="45">
+                        </label>
+                    </div>
+                    <!-- plain transaction -->
+                    <div class="input-group" show="plain">
+                        <label>
+                            <strong>Flags</strong>
+                            <input tx-plain-flags name="tx-plain-flags" type="number">
+                        </label>
+                    </div>
+                    <div class="input-group" show="plain">
+                        <label>
+                            <strong>Data</strong>
+                            <input tx-plain-data name="tx-plain-data" pattern="^[A-Za-z0-9+/]*$" size="45">
+                        </label>
+                    </div>
+                    <div class="input-group" show="plain">
+                        <label>
+                            <strong>Proof</strong>
+                            <input tx-plain-proof name="tx-plain-proof" pattern="^[A-Za-z0-9+/]*$" size="45">
+                        </label>
+                    </div>
+
+                    <!-- Vesting contract creation -->
+                    <div class="input-group" show="vesting-creation">
+                        <label>
+                            <strong>Vesting Owner</strong>
+                            <select tx-vesting-owner></select>
+                        </label>
+                    </div>
+                    <div class="input-group" show="vesting-creation">
+                        <label>
+                            <strong>Vesting Step Blocks</strong>
+                            <input tx-vesting-step-blocks name="tx-vesting-step-blocks" type="number" step="1">
+                        </label>
+                    </div>
+                    <div class="input-group" show="vesting-creation">
+                        <label>
+                            <strong>Vesting Step Amount</strong>
+                            <input tx-vesting-step-amount name="tx-vesting-step-amount" type="number" placeholder="optional">
+                        </label>
+                    </div>
+                    <div class="input-group" show="vesting-creation">
+                        <label>
+                            <strong>Vesting Start</strong>
+                            <input tx-vesting-start name="tx-vesting-creation-start" type="number" step="1" placeholder="optional">
+                        </label>
+                    </div>
+                    <div class="input-group" show="vesting-creation">
+                        <label>
+                            <strong>Vesting Total Amount</strong>
+                            <input tx-vesting-total-amount name="tx-vesting-total-amount" type="number" placeholder="optional">
+                        </label>
+                    </div>
+
+                    <!-- HTLC creation -->
+                    <div class="input-group" show="htlc-creation">
+                        <label>
+                            <strong>HTLC Sender</strong>
+                            <select tx-htlc-sender></select>
+                        </label>
+                    </div>
+                    <div class="input-group" show="htlc-creation">
+                        <label>
+                            <strong>HTLC Recipient</strong>
+                            <select tx-htlc-recipient></select>
+                        </label>
+                    </div>
+                    <div class="input-group" show="htlc-creation">
+                        <label>
+                            <strong>HTLC Hash Algo</strong>
+                            <select tx-htlc-hash-algo>
+                                <option value="blake2b" selected>Blake2b</option>
+                                <option value="sha256">Sha256</option>
+                            </select>
+                        </label>
+                    </div>
+                    <div class="input-group" show="htlc-creation">
+                        <label>
+                            <strong>HTLC Hash Pre-Image</strong>
+                            <input tx-htlc-hash-pre-image name="tx-htlc-hash-pre-image">
+                        </label>
+                    </div>
+                    <div class="input-group" show="htlc-creation">
+                        <label>
+                            <strong>HTLC Hash Count</strong>
+                            <input tx-htlc-hash-count name="tx-htlc-hash-count" type="number">
+                        </label>
+                    </div>
+                    <div class="input-group" show="htlc-creation">
+                        <label>
+                            <strong>HTLC Timeout</strong>
+                            <input tx-htlc-timeout name="tx-htlc-timeout" type="number">
+                        </label>
+                    </div>
+
+                    <div class="info-block" style="display:none">
+                        <strong>Contract</strong>
+                        <span contract-address class="address"></span>
+                    </div>
+
+                    <div class="input-group">
+                        <!-- <button tx-clear type="button">Clear</button> -->
+                        <!-- <button tx-generate type="button">Generate</button> -->
+                        <button tx-send type="button" disabled>Send</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="right">
+            <div class="info" network-ui>
+                <div class="info-title" network-title>Network</div>
+
+                <div class="info-block">
+                    <strong>Peer address</strong>
+                    <span peer-address></span>
+                </div>
+                <div class="info-block">
+                    <strong>Peers</strong>
+                    <span peer-count></span>
+                    &nbsp;
+                    <small>(<span peer-count-ws></span> WS / <span peer-count-wss></span> WSS / <span peer-count-rtc></span> RTC)</small>
+                </div>
+                <div class="info-block">
+                    <strong>Received</strong>
+                    <span bytes-received></span>
+                </div>
+                <div class="info-block">
+                    <strong>Sent</strong>
+                    <span bytes-sent></span>
+                </div>
+            </div>
+
+            <div blockchain-ui>
+                <div class="info">
+                    <div class="info-title not-connected" title>Blockchain - <span></span></div>
+                    <!-- <div class="info-block">
+                        <strong>Height</strong>
+                        <span chain-height></span>
+                    </div> -->
+                    
+                    <!-- <div class="info-block" hide-nano hide-pico>
+                        <strong>Work</strong>
+                        <span total-difficulty></span> / <span total-work></span>
+                    </div> -->
+                    <div class="info-block">
+                        <strong>Block Time</strong>
+                        <span average-block-time></span> <small>average</small> /
+                        <span last-block-time></span> <small>last</small>
+                    </div>
+                    <div class="info-block">
+                        <strong>Time to first consensus</strong>
+                        <span time-to-first-consensus></span>
+                    </div>
+                <!-- </div>
+
+                <div class="info"> -->
+                    <div class="input-group">
+                        <label>
+                            <strong>Height</strong>
+                            <input block-height-input name="block-height" type="number" step="1" min="0">
+                        </label>
+                    </div>
+                    <div block-info>
+                        <div class="info-block">
+                            <strong>Hash</strong>
+                            <hash block-hash></hash>
+                        </div>
+                        <div class="info-block">
+                            <strong>PoW Hash</strong>
+                            <hash block-pow-hash></hash>
+                        </div>
+                        <div class="info-block">
+                            <strong>Prev Hash</strong>
+                            <hash block-prev-hash></hash>
+                        </div>
+                        <div class="info-block">
+                            <strong>Accounts Hash</strong>
+                            <hash block-accounts-hash></hash>
+                        </div>
+                        <div class="info-block">
+                            <strong>Difficulty</strong>
+                            <span block-difficulty></span>
+                        </div>
+                        <div class="info-block">
+                            <strong>Timestamp</strong>
+                            <span block-timestamp></span>
+                        </div>
+                        <div class="info-block">
+                            <strong>Nonce</strong>
+                            <span block-nonce></span>
+                        </div>
+                        <div class="info-block collapsible collapsed">
+                            <strong block-interlink-title>Interlink</strong>
+                            <div block-interlink></div>
+                        </div>
+                        <div class="info-block collapsible collapsed">
+                            <span block-transactions-title>
+                                <strong>Transactions</strong>
+                                <span block-transactions-count></span>
+                            </span>
+                            <div block-transactions></div>
+                        </div>
+                    </div>
+                    <strong block-not-found style="display:none" class="info-block">
+                        Block not available.
+                    </strong>
+                </div>
+            </div>
+            
+         
+
+            <div class="info" miner-ui>
+                <div class="info-title" miner-title>Miner</div>
+                <form>
+                    <div class="input-group">
+                        <label>
+                            <strong>Mining from</strong>
+                            <select miner-mode-selector name="miner-mode">
+                                <option value="solo" miner-mode-solo>Local</option>
+                                <option value="smart" miner-mode-smart>Pool</option>
+                                <!-- <option value="nano" miner-mode-nano>Pool Nano</option> -->
+                            </select>
+                        </label>
+                    </div>
+
+                    <div class="input-group" show="smart">
+                        <label>
+                            <strong>Pool Server</strong>
+                            <select pool-server-selector name="pool-server">
+                                <optgroup label="Per Hashrate">
+                                    <option value="poolhashrate01.bitcoinkrypton.org:12111">poolhashrate01.bitcoinkrypton.org</option>
+                                    <option value="poolhashrate02.bitcoinkrypton.org:12111">poolhashrate02.bitcoinkrypton.org</option>
+                                    <option value="poolhashrate03.bitcoinkrypton.org:12111">poolhashrate03.bitcoinkrypton.org</option>
+                                    <option value="poolhashrate04.bitcoinkrypton.org:12111">poolhashrate04.bitcoinkrypton.org</option>
+                                    <option value="poolhashrate05.bitcoinkrypton.org:12111">poolhashrate05.bitcoinkrypton.org</option>
+                                    <option value="poolhashrate06.bitcoinkrypton.org:12111">poolhashrate06.bitcoinkrypton.org</option>
+                                </optgroup>
+                                <optgroup label="Per Miner">
+                                    <option value="poolminer01.bitcoinkrypton.org:12111">poolminer01.bitcoinkrypton.org</option>
+                                    <option value="poolminer02.bitcoinkrypton.org:12111">poolminer02.bitcoinkrypton.org</option>
+                                    <option value="poolminer03.bitcoinkrypton.org:12111">poolminer03.bitcoinkrypton.org</option>
+                                </optgroup>
+                            </select>
+                        </label>
+                    </div>
+                </form>
+
+                <div class="info-block">
+                    <strong>Miner Address</strong>
+                    <select miner-address></select>
+                </div>
+                <div class="info-block">
+                    <strong>Pool Connection</strong>
+                    <span pool-connection-state></span>
+                </div>
+                <div class="info-block">
+                    <strong>Working</strong>
+                    <span working></span>
+                </div>
+                <div class="info-block">
+                    <strong>Hashrate</strong>
+                    <span hashrate></span> H/s
+                </div>
+                <div class="info-block">
+                    <strong>Last block mined at</strong>
+                    <span last-mined-block-timestamp></span>
+                </div>
+                <div class="input-group">
+                    <button start-button>Start Mining</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="info" style="clear: left;" mempool-ui>
+            <div class="info-title" mempool-title>Mempool</div>
+
+            <div class="info-block">
+                <strong>Transaction Count</strong>
+                <span transaction-count></span>
+            </div>
+            <div class="info-block" transactions></div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="Utils.js"></script>
+<script type="text/javascript" src="script.js"></script>
+</body>
+</html>

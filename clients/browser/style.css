@@ -1,0 +1,588 @@
+html {
+    min-height: 100vh;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    background: linear-gradient(#3523ae,#1c0446) fixed;
+}
+
+body {
+    letter-spacing: 0.3px;
+    color: #333;
+    margin: auto;
+    max-width: 1200px;
+    min-height: 100%;
+}
+
+[client="pico"] [hide-pico],
+[client="nano"] [hide-nano],
+[client="light"] [hide-light],
+[client="full"] [hide-full] {
+    display: none;
+}
+
+header {
+    margin: auto;
+    margin-bottom: 25px;
+    text-align: center;
+    display: flex;
+    color: white;
+    justify-content: center;
+    align-items: flex-end;
+}
+
+header .name {
+    line-height: 85px;
+    font-size: 62px;
+    font-family: sans-serif;
+    font-weight: bold;
+}
+
+header .icon-krypton::before {
+    content: '';
+    background-image: url('data:image/svg+xml,<svg width="499" height="440" xmlns="http://www.w3.org/2000/svg"><path d="M389.33 20.73C382.65 9.28 366.48 0 353.24 0h-208c-13.26 0-29.4 9.28-36.09 20.73L5.33 198.87c-6.68 11.45-6.68 30.02 0 41.47l103.82 178.14c6.68 11.45 22.85 20.74 36.09 20.74h208c13.26 0 29.4-9.28 36.09-20.74l103.82-178.14c6.68-11.45 6.68-30.01 0-41.47L389.33 20.73zM272.6 347.45v41.1h-38.74v-39.53c-23.53-2.82-51.45-13.02-70.28-30.12l25.57-39.06c20.4 15.06 37.96 22.9 57.1 22.9 22.43 0 32.31-9.1 32.31-27.29 0-40.63-105.4-39.84-105.4-111.06 0-38.74 23.2-65.57 60.7-73.1V50.51h38.74v40c25.57 3.6 43.92 16.16 59.45 32.47l-29.49 33.26c-14.43-13.02-26.66-19.77-43.45-19.77-19.13 0-29.49 7.53-29.49 25.26 0 37.49 105.41 34.35 105.41 109.96-.15 37.8-21.33 67.13-62.43 75.76z" fill="%23FFC107" fill-rule="evenodd"/></svg>');
+    background-repeat: no-repeat;
+    background-size: contain;
+    margin-right: 10px;
+    display: inline-block;
+    width: 70px;
+    height: 60px;
+}
+
+header .subheader {
+    padding-bottom: 3px;
+    padding-left: 8px;
+    width: 227px;
+}
+
+header .subtitle {
+    font-size: 15px;
+    letter-spacing: 2px;
+    position: absolute;
+    top: 80px;
+}
+
+
+#client-types {
+    display: flex;
+    justify-content: space-between;
+}
+
+#client-types .client-link-container {
+    /* to avoid that the page jumps to the selected anchor target */
+    padding-top: 96px;
+}
+
+#client-types a {
+    text-decoration: none;
+    color: rgba(255,255,255,0.6);
+}
+
+#client-types .client-link-container:target a {
+    font-weight: bold;
+    color: white;
+}
+
+input,
+select {
+    max-width: 92%;
+    border-radius: 3px;
+    padding: 10px 10px;
+    line-height: 1;
+    background-color: #FFF;
+    border: 1px solid #EEE;
+    font-size: 14px;
+}
+
+select {
+    padding: 9px 6px;
+}
+
+button {
+    border: 0;
+    border-radius: 3px;
+    display: inline-block;
+    text-align: center;
+    background: #1c0446;
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    line-height: 1;
+    padding: 12px 50px;
+    box-sizing: border-box;
+    outline: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #43A047;
+    color: #FFF;
+}
+
+button:disabled {
+    pointer-events: none;
+    opacity: 0.4;
+    cursor: auto;
+}
+
+button.greenbutton {
+    background-color: #2dad2d;
+    opacity: 0.8;
+    transition: all 0.2s;
+}
+
+button.greenbutton:hover {
+    opacity: 1;
+}
+
+input.error {
+    border: 1px solid #f44336;
+}
+
+hash {
+    font-size: 12px;
+    font-family: monospace;
+}
+
+.f-left {
+    float: left;
+}
+
+.f-right {
+    float: right;
+}
+
+.clr-both {
+    clear: both;
+}
+
+
+/* Main UI */
+
+.main {
+    display: none;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.left, .right {
+    float: left;
+    width: 50%;
+}
+
+@media (max-width: 768px) {
+    .left, .right {
+        width: 100%;
+    }
+}
+
+.main > .info {
+    width: 100%;
+}
+.info {
+    margin: 0 10px 15px 10px;
+    font-size: 15px;
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+    overflow: hidden;
+}
+
+.info.collapsed .info-block, .info.collapsed .input-group, .info.collapsed form {
+    display: none;
+}
+
+.info hr {
+    padding: 0;
+    margin: 0;
+    border: 3px solid rgba(255, 255, 255, 0.89);
+}
+
+.info hr.morespace {
+    border: 6px solid rgba(255, 255, 255, 0.89);
+}
+
+.info-block {
+    padding: 6px 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background-color: rgba(255, 255, 255, 0.89);
+    color: #000;
+    letter-spacing: 0.3px;
+}
+
+.info-block:empty {
+    padding: 0;
+}
+
+.info-block strong {
+    display: inline-block;
+}
+
+.info-title {
+    position: relative;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    padding: 7px 10px;
+    background: rgba(255, 255, 255, 0.2);
+    color: #FFF;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+}
+
+.info-title::before,
+.info-title::after {
+    /* close icon in CSS */
+    content: '';
+    position: absolute;
+    top: 16px;
+    margin-right: 10px;
+    display: inline-block;
+    height: 3px;
+    width: 14px;
+    background: #FFC107;
+}
+
+.info-title::before {
+    transform: rotate(-45deg);
+    right: 8px;
+}
+
+.info-title::after {
+    transform: rotate(45deg);
+    right: 0;
+}
+
+.collapsed > .info-title::before {
+    transform: rotate(45deg);
+}
+
+.collapsed > .info-title::after {
+    transform: rotate(-45deg);
+}
+
+.input-group {
+    padding: 3px 8px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background-color: rgba(255, 255, 255, 0.89);
+    color: #000;
+}
+
+.input-group label {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+label strong {
+    margin-right: 8px;
+}
+
+.input-group strong {
+    display: inline-block;
+}
+
+.input-group-button {
+    padding: 0;
+}
+
+.input-group.input-group-button button {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    padding: 14px 0;
+    width: 100%;
+}
+
+.address {
+    font-family: monospace;
+    word-break: break-word;
+}
+
+.list-entry {
+    display: flex;
+    padding-top: 8px;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+}
+
+.list-entry > :first-child {
+    flex-grow: 1;
+    cursor: pointer;
+}
+
+.list-entry button {
+    padding: 4px 8px;
+    background-color: #1c0446;
+    color: white;
+}
+
+.list-entry .list-entry-export {
+    margin-right: 8px;
+}
+
+.list-entry .list-entry-export:before {
+    content: 'Export';
+}
+
+.list-entry .list-entry-export.clicked {
+    background-color: #FFC107;
+}
+
+.list-entry .list-entry-delete:before {
+    content: 'Delete';
+}
+
+.entry-privateKey {
+    border-radius: 3px;
+    padding: 4px;
+    line-height: 1;
+    background-color: #FFF;
+    display: none;
+    overflow: hidden;
+    word-break: break-word;
+}
+
+.entry-privateKey.clicked{
+    display: block;
+}
+
+#content {
+    position: relative;
+}
+
+[overlay] {
+    display: none;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    background: rgba(239, 239, 239, 0.95);
+    z-index: 1000;
+}
+
+[overlay] .message {
+    font-size: 18pt;
+    text-align: center;
+    margin-top: 15%;
+    padding: 15px;
+}
+
+/* Block UI */
+
+[blockchain-ui] [block-height-input] {
+    width: 70px;
+}
+
+/* The order of these consensus classes is important to enable overwriting */
+
+[blockchain-ui] [title] {
+    transition: background ease 0.5s;
+    position: relative;
+}
+
+/* [blockchain-ui] [title]:after {
+    position: absolute;
+    top: 7px;
+    right: 7px;
+    font-style: italic;
+    font-size: 14px;
+    opacity: 0.65;
+    font-weight: 400;
+} */
+
+[blockchain-ui] .not-connected {
+    background: #B71C1C;
+    opacity: 0.6;
+}
+
+[blockchain-ui] .not-connected span::after {
+    content: "Not connected";
+}
+
+[blockchain-ui] .initializing {
+    background: #F9A825;
+    opacity: 0.8;
+}
+
+[blockchain-ui] .initializing span::after {
+    content: "Initializing...";
+}
+
+[blockchain-ui] .connecting span::after {
+    content: "Connecting...";
+}
+
+[blockchain-ui] .syncing {
+    background: #EF6C00;
+    opacity: 0.8;
+}
+[blockchain-ui] .syncing span::after {
+    content: "Synchronizing...";
+}
+[blockchain-ui] .sync-chain-proof span::after {
+    content: "Downloading proof...";
+}
+[blockchain-ui] .verify-chain-proof span::after {
+    content: "Verifying proof...";
+}
+[blockchain-ui] .sync-accounts-tree span::after {
+    content: "Downloading accounts...";
+}
+[blockchain-ui] .verify-accounts-tree span::after {
+    content: "Verifying accounts...";
+}
+
+[blockchain-ui] .consensus-established {
+    background: #43A047;
+    opacity: 1.0;
+}
+
+[blockchain-ui] .consensus-established span::after {
+    content: "Consensus established";
+}
+
+/* [blockchain-ui] .info:first-child {
+    margin-bottom: 0px;
+    border-radius: 0px;
+} */
+
+.collapsible > :first-child {
+    position: relative;
+    padding-right: 32px;
+}
+
+.collapsible > :first-child::before,
+.collapsible > :first-child::after {
+    /* close icon in CSS */
+    content: '';
+    position: absolute;
+    top: 6px;
+    display: inline-block;
+    height: 3px;
+    width: 14px;
+    background: #FFC107;
+}
+
+.collapsible > :first-child::before {
+    transform: rotate(-45deg);
+    right: 8px;
+}
+
+.collapsible > :first-child::after {
+    transform: rotate(45deg);
+    right: 0;
+}
+
+.collapsible.collapsed > :first-child::before {
+    transform: rotate(45deg);
+}
+
+.collapsible.collapsed > :first-child::after {
+    transform: rotate(-45deg);
+}
+
+.collapsible.collapsed > :not(:first-child) {
+    display: none;
+}
+
+
+.button-padding {
+    padding: 6px 0px;
+}
+
+/* Account Info UI */
+
+[account-info-ui] [clear-button] {
+    display: inline-block;
+    height: 38px;
+}
+
+[account-info-ui] [account-details],
+[account-info-ui] [vesting-account-details],
+[account-info-ui] [htlc-account-details] {
+    display: none;
+}
+
+[account-info-ui][account-type="basic"] [account-details],
+[account-info-ui][account-type="vesting"] [account-details],
+[account-info-ui][account-type="vesting"] [vesting-account-details],
+[account-info-ui][account-type="htlc"] [account-details],
+[account-info-ui][account-type="htlc"] [htlc-account-details] {
+    display: block;
+}
+
+[account-info-ui][account-type="unknown"] [account-type]:after {
+    content: 'Unknown account type.';
+}
+[account-info-ui][account-type="basic"] [account-type]:after {
+    content: 'Basic';
+}
+[account-info-ui][account-type="vesting"] [account-type]:after {
+    content: 'Vesting';
+}
+[account-info-ui][account-type="htlc"] [account-type]:after {
+    content: 'HTLC';
+}
+
+/* Transaction UI */
+
+[transaction-ui] .error {
+    background-color: #B71C1C;
+}
+
+[transaction-ui] .warning {
+    background-color: #EF6C00;
+}
+
+[transaction-ui] .expire {
+    background-color: #EEE;
+}
+
+[transaction-ui] .success {
+    background-color: #43A047;
+}
+
+[transaction-ui] select {
+    display: block;
+}
+
+[transaction-ui] .input-group strong {
+    width: 100px;
+}
+
+[transaction-ui] [show] {
+    /* hide elements by default that should only be visible in specific states */
+    display: none;
+}
+
+[transaction-ui][tx-type="basic"] [show~="basic"],
+[transaction-ui][tx-type="general"] [show~="general"],
+[transaction-ui][tx-type="plain"] [show~="plain"],
+[transaction-ui][tx-type="vesting-creation"] [show~="vesting-creation"],
+[transaction-ui][tx-type="htlc-creation"] [show~="htlc-creation"] {
+    display: block;
+}
+/* Miner */
+
+[miner-ui] select {
+    display: block;
+}
+
+[miner-ui] [show] {
+    /* hide elements by default that should only be visible in specific states */
+    display: none;
+}
+[miner-ui][miner-mode="smart"] [show~="smart"] {
+    display: block;
+}
+
+[miner-ui] .started {
+    background: #B71C1C;
+}
